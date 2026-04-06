@@ -6,7 +6,7 @@ import Footer from "./Footer.jsx";
 function Layout() {
   return (
     <div>
-      <Navbar></Navbar>
+      <Navbar />
       <div className="flex">
         <Sidebar />
 
@@ -14,7 +14,7 @@ function Layout() {
           <Outlet />
         </div>
       </div>
-      <Footer></Footer>
+     <Footer />
     </div>
   );
 }
