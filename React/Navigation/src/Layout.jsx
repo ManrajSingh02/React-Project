@@ -5,13 +5,13 @@ import Footer from "./Footer.jsx";
 function Layout() {
   return (
     <div>
-      <Navbar></Navbar>
+      <Navbar/>
       <div className="flex">
         <div className="flex-1 p-6">
           <Outlet />
         </div>
       </div>
-      <Footer></Footer>
+      <Footer/>
     </div>
   );
 }
