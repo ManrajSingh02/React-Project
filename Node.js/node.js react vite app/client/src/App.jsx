@@ -5,8 +5,10 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
-    fetch("http://localhost:3008/users")
+    fetch(`${BASE_URL}/users`)
       .then((res) => {
         if (!res.ok) {
           throw new Error("Failed to fetch users");
@@ -23,16 +25,8 @@ export default function App() {
       });
   }, []);
 
-  
-  if (loading) {
-    return <h2>Loading users...</h2>;
-  }
-
-
-  if (error) {
-    return <h2 style={{ color: "red" }}>{error}</h2>;
-  }
-
+  if (loading) return <h2>Loading users...</h2>;
+  if (error) return <h2 style={{ color: "red" }}>{error}</h2>;
 
   return (
     <div style={{ padding: "20px" }}>
