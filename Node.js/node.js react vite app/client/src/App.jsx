@@ -25,19 +25,37 @@ export default function App() {
       });
   }, []);
 
-  if (loading) return <h2>Loading users...</h2>;
-  if (error) return <h2 style={{ color: "red" }}>{error}</h2>;
-
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>User List</h1>
-      <ul>
-        {users.map((user) => (
-          <li key={user.id}>
-            <strong>{user.name}</strong> - {user.email}
-          </li>
-        ))}
-      </ul>
+    <div className="min-h-screen bg-gradient-to-r from-blue-100 to-teal-200 flex items-center justify-center p-6">
+      <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-6">
+        <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
+          User List
+        </h1>
+
+        {loading ? (
+          <p className="text-center text-gray-600 animate-pulse">
+            Loading users...
+          </p>
+        ) : error ? (
+          <p className="text-center text-red-500 font-medium">{error}</p>
+        ) : users.length === 0 ? (
+          <p className="text-center text-gray-500">No users found</p>
+        ) : (
+          <ul className="space-y-3">
+            {users.map((user) => (
+              <li
+                key={user.id}
+                className="p-4 rounded-xl bg-gray-50 hover:bg-blue-50 transition shadow-sm"
+              >
+                <p className="text-lg font-semibold text-gray-800">
+                  {user.name}
+                </p>
+                <p className="text-sm text-gray-600">{user.email}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }
