@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router";
-import { users } from "./Data.jsx"; 
+import { users } from "./UsersInfo.jsx"; 
 
 export default function User() {
   const { id } = useParams();
@@ -16,23 +16,23 @@ export default function User() {
   }
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center bg-gradient-to-br from-blue-200 to-teal-200 p-4">
+    <div className="min-h-[70vh] flex items-center justify-center bg-linear-to-br from-blue-200 to-teal-200 p-4">
       <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 text-center transition hover:scale-105 duration-300">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">
-          {user.name}
+     {user && <h1>{user.name}</h1>}
         </h1>
 
-        <div className="space-y-2 mt-4">
-          <p>
-            <strong>User ID:</strong> {user.id}
-          </p>
-          <p>
-            <strong>Department:</strong> {user.department}
-          </p>
-          <p>
-            <strong>Age:</strong> {user.age}
-          </p>
-        </div>
+       <div className="space-y-2 mt-4 text-gray-700">
+  <p>
+    <span className="font-semibold text-gray-900">User ID:</span> {user.id}
+  </p>
+  <p>
+    <span className="font-semibold text-gray-900">Department:</span> {user.department}
+  </p>
+  <p>
+    <span className="font-semibold text-gray-900">Age:</span> {user.age}
+  </p>
+</div>
 
         <button
           onClick={() => navigate("/")}

@@ -15,7 +15,7 @@ function Home() {
     "bg-blue-400 p-4 flex justify-center gap-6 shadow-md rounded-2xl";
 
   return (
-    <div className="min-h-[70vh] bg-gradient-to-r from-blue-200 to-teal-300 flex items-center justify-center rounded-2xl">
+    <div className="min-h-[70vh] bg-linear-to-r from-blue-200 to-teal-300 flex items-center justify-center rounded-2xl">
       <div className="bg-white p-10 rounded-2xl shadow-xl w-full max-w-sm">
         <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
           Home

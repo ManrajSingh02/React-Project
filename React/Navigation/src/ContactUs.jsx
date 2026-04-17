@@ -1,6 +1,6 @@
 function ContactUs() {
   return (
-    <div className="min-h-[70vh] bg-gradient-to-r from-green-100 to-teal-200 flex items-center justify-center">
+    <div className="min-h-[70vh] bg-linear-to-r from-green-100 to-teal-200 flex items-center justify-center">
       <div className="bg-white p-10 rounded-2xl shadow-xl w-full max-w-sm">
         <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
           Contact Us

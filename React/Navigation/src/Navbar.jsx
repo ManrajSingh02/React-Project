@@ -9,7 +9,7 @@ function Navbar() {
     "bg-blue-400 p-4 flex justify-center gap-6 shadow-md rounded-2xl";
 
   return (
-    <nav className="h-30 bg-gradient-to-r from-blue-200 to-teal-300 p-4 flex justify-center gap-6 shadow-md rounded-2xl ">
+    <nav className="h-30 bg-linear-to-r from-blue-200 to-teal-300 p-4 flex justify-center gap-6 shadow-md rounded-2xl ">
       <NavLink
         to="/"
         end
