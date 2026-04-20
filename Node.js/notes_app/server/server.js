@@ -1,7 +1,8 @@
 const http = require("http");
-const { handleNotes } = require("./routes/notes");
+const { handleNoteRoutes } = require("./routes/noteRoutes");
+const { URL } = require("url");
 
-const PORT = process.env.PORT ?? 4003;
+const PORT = process.env.PORT || 3008;
 
 const server = http.createServer((req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -11,10 +12,6 @@ const server = http.createServer((req, res) => {
   if (req.method === "OPTIONS") {
     res.writeHead(200);
     return res.end();
-  }
-
-  if (req.url.startsWith("/notes")) {
-    return handleNotes(req, res);
   }
 
   res.writeHead(200);

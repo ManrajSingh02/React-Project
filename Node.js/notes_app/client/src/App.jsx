@@ -9,34 +9,12 @@ export default function App() {
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState("");
 
-  const fetchNotes = async () => {
-    try {
-      const res = await fetch(`${BASE_URL}/notes`);
-      if (!res.ok) throw new Error("Failed to fetch");
-      const data = await res.json();
-      setNotes(data);
-    } catch (err) {
-      setError(" Cannot connect to server");
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    fetchNotes();
-  }, []);
-
   const handleSubmit = async () => {
     try {
       const method = editingId ? "PUT" : "POST";
       const url = editingId
         ? `${BASE_URL}/notes/${editingId}`
         : `${BASE_URL}/notes`;
-
-      await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, content }),
-      });
 
       setTitle("");
       setContent("");
@@ -69,7 +47,6 @@ export default function App() {
       <div className="w-full max-w-2xl">
         <h1 className="text-3xl font-bold text-center mb-6">Notes App</h1>
 
-        {/* Error Message */}
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
         <div className="bg-white shadow-md rounded-2xl p-6 mb-6">
