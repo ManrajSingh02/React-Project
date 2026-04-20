@@ -13,7 +13,8 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(""); // ✅ NEW
+  const [success, setSuccess] = useState("");
+
 
   const handleChange = (e) => {
     setForm({
@@ -22,11 +23,16 @@ export default function App() {
     });
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     setSuccess("");
+
+    
+    console.log("BASE_URL:", BASE_URL);
+    console.log("FORM DATA:", form);
 
     if (!form.name || !form.email || !form.message) {
       setError("Please fill all fields");
@@ -43,22 +49,20 @@ export default function App() {
         body: JSON.stringify(form),
       });
 
-      let data;
-      try {
-        data = await res.json();
-      } catch {
-        data = {};
-      }
+      const text = await res.text(); // safer than json
+      console.log("SERVER RESPONSE:", text);
 
       if (!res.ok) {
-        throw new Error(data.message || "Failed to submit");
+        throw new Error("Failed to submit");
       }
 
       setSuccess("User added successfully!");
 
-      setUsers((prev) => [{ id: Date.now(), ...form }, ...prev]);
-
       setForm({ name: "", email: "", message: "" });
+
+
+      await fetchUsers();
+
     } catch (err) {
       console.error(err);
       setError("Something went wrong. Please try again.");
@@ -67,9 +71,13 @@ export default function App() {
     }
   };
 
+
   const fetchUsers = async () => {
     setFetchLoading(true);
+
     try {
+      console.log("Fetching from:", `${BASE_URL}/users`);
+
       const res = await fetch(`${BASE_URL}/users`);
       const data = await res.json();
 
@@ -86,6 +94,7 @@ export default function App() {
     }
   };
 
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -93,7 +102,9 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-100 p-6 flex flex-col items-center">
       <div className="w-full max-w-2xl bg-white p-6 rounded-xl shadow">
-        <h1 className="text-2xl font-bold mb-4 text-center">Contact Form</h1>
+        <h1 className="text-2xl font-bold mb-4 text-center">
+          Contact Form
+        </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -135,11 +146,15 @@ export default function App() {
           <p className="text-green-600 mt-3 text-center">{success}</p>
         )}
 
-        {error && <p className="text-red-500 mt-3 text-center">{error}</p>}
+        {error && (
+          <p className="text-red-500 mt-3 text-center">{error}</p>
+        )}
       </div>
 
       <div className="w-full max-w-2xl mt-6 bg-white p-6 rounded-xl shadow">
-        <h2 className="text-xl font-semibold mb-4">Submitted Users</h2>
+        <h2 className="text-xl font-semibold mb-4">
+          Submitted Users
+        </h2>
 
         {fetchLoading ? (
           <p>Loading users...</p>
@@ -148,7 +163,10 @@ export default function App() {
         ) : (
           <ul className="space-y-3">
             {users.map((user) => (
-              <li key={user.id} className="border p-3 rounded bg-gray-50">
+              <li
+                key={user.id}
+                className="border p-3 rounded bg-gray-50"
+              >
                 <p className="font-medium">Name: {user.name}</p>
                 <p className="font-medium">Email: {user.email}</p>
                 <p className="font-medium">Message: {user.message}</p>
