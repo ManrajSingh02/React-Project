@@ -6,9 +6,9 @@ const handleUsers = async (req, res) => {
 
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify(data));
-  } catch (error) {
+  } catch (err) {
     res.writeHead(500, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ message: "Error reading data" }));
+    res.end(JSON.stringify({ message: "Error fetching users" }));
   }
 };
 
