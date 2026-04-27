@@ -29,7 +29,7 @@ function handleNoteRoutes(req, res, pathname) {
     return handleCreateNote(req, res);
   }
 
-  // UPDATE 
+  
   if (pathname.startsWith("/notes/") && method === "PUT") {
     const parts = pathname.split("/");
     const id = parseInt(parts[2]);
@@ -42,7 +42,7 @@ function handleNoteRoutes(req, res, pathname) {
     return handleUpdateNote(req, res, id);
   }
 
-  // DELETE note
+  
   if (pathname.startsWith("/notes/") && method === "DELETE") {
     const parts = pathname.split("/");
     const id = parseInt(parts[2]);
