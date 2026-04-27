@@ -9,7 +9,7 @@ export default function App() {
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState("");
 
-  // ✅ Fetch notes
+
   const fetchNotes = async () => {
     try {
       const res = await fetch(`${BASE_URL}/notes`);
@@ -20,12 +20,12 @@ export default function App() {
     }
   };
 
-  // ✅ Load notes on page load
+
   useEffect(() => {
     fetchNotes();
   }, []);
 
-  // ✅ Add / Update note
+
   const handleSubmit = async () => {
     if (!title || !content) {
       return setError("Fill all fields");
@@ -49,7 +49,7 @@ export default function App() {
       const text = await res.text();
       if (!res.ok) throw new Error(text);
 
-      // ✅ Reset form
+     
       setTitle("");
       setContent("");
       setEditingId(null);
@@ -61,7 +61,7 @@ export default function App() {
     }
   };
 
-  // ✅ Delete note
+
   const deleteNote = async (id) => {
     try {
       const res = await fetch(`${BASE_URL}/notes/${id}`, {
@@ -76,7 +76,7 @@ export default function App() {
     }
   };
 
-  // ✅ Edit note
+
   const editNote = (note) => {
     setTitle(note.title);
     setContent(note.content);
@@ -92,7 +92,7 @@ export default function App() {
           <p className="text-red-500 text-center mb-4">{error}</p>
         )}
 
-        {/* Form */}
+     
         <div className="bg-white shadow-md rounded-2xl p-6 mb-6">
           <input
             className="w-full border rounded-lg p-2 mb-3"
@@ -121,7 +121,7 @@ export default function App() {
           </button>
         </div>
 
-        {/* Notes List */}
+    
         <div className="space-y-4">
           {notes.length === 0 && (
             <p className="text-center text-gray-500">No notes yet</p>
