@@ -9,33 +9,74 @@ export default function App() {
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState("");
 
-  const handleSubmit = async () => {
+  // ✅ Fetch notes
+  const fetchNotes = async () => {
     try {
-      const method = editingId ? "PUT" : "POST";
+      const res = await fetch(`${BASE_URL}/notes`);
+      const data = await res.json();
+      setNotes(data);
+    } catch (err) {
+      setError("Failed to fetch notes");
+    }
+  };
+
+  // ✅ Load notes on page load
+  useEffect(() => {
+    fetchNotes();
+  }, []);
+
+  // ✅ Add / Update note
+  const handleSubmit = async () => {
+    if (!title || !content) {
+      return setError("Fill all fields");
+    }
+
+    try {
       const url = editingId
         ? `${BASE_URL}/notes/${editingId}`
         : `${BASE_URL}/notes`;
 
+      const method = editingId ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title, content }),
+      });
+
+      const text = await res.text();
+      if (!res.ok) throw new Error(text);
+
+      // ✅ Reset form
       setTitle("");
       setContent("");
       setEditingId(null);
+      setError("");
+
       fetchNotes();
     } catch (err) {
-      setError(" Operation failed");
+      setError(err.message);
     }
   };
 
+  // ✅ Delete note
   const deleteNote = async (id) => {
     try {
-      await fetch(`${BASE_URL}/notes/${id}`, {
+      const res = await fetch(`${BASE_URL}/notes/${id}`, {
         method: "DELETE",
       });
+
+      if (!res.ok) throw new Error("Delete failed");
+
       fetchNotes();
     } catch {
-      setError(" Delete failed");
+      setError("Delete failed");
     }
   };
 
+  // ✅ Edit note
   const editNote = (note) => {
     setTitle(note.title);
     setContent(note.content);
@@ -47,8 +88,11 @@ export default function App() {
       <div className="w-full max-w-2xl">
         <h1 className="text-3xl font-bold text-center mb-6">Notes App</h1>
 
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        {error && (
+          <p className="text-red-500 text-center mb-4">{error}</p>
+        )}
 
+        {/* Form */}
         <div className="bg-white shadow-md rounded-2xl p-6 mb-6">
           <input
             className="w-full border rounded-lg p-2 mb-3"
@@ -77,7 +121,12 @@ export default function App() {
           </button>
         </div>
 
+        {/* Notes List */}
         <div className="space-y-4">
+          {notes.length === 0 && (
+            <p className="text-center text-gray-500">No notes yet</p>
+          )}
+
           {notes.map((note) => (
             <div
               key={note.id}
@@ -110,3 +159,5 @@ export default function App() {
     </div>
   );
 }
+
+console.log("BASE_URL:", BASE_URL);

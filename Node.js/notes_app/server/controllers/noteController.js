@@ -1,3 +1,24 @@
+const {
+  getAllNotes,
+  createNote,
+  updateNote,
+  deleteNote,
+} = require("../services/noteService");
+
+
+function handleGetNotes(req, res) {
+  try {
+    const notes = getAllNotes();
+
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify(notes));
+  } catch (err) {
+    res.writeHead(500);
+    res.end("Error fetching notes");
+  }
+}
+
+
 function handleCreateNote(req, res) {
   let body = "";
 
@@ -7,8 +28,6 @@ function handleCreateNote(req, res) {
 
   req.on("end", () => {
     try {
-      console.log("BODY:", body); // 🔥 debug
-
       const parsed = JSON.parse(body);
       const { title, content } = parsed;
 
@@ -29,3 +48,47 @@ function handleCreateNote(req, res) {
     }
   });
 }
+
+
+function handleUpdateNote(req, res, id) {
+  let body = "";
+
+  req.on("data", (chunk) => {
+    body += chunk.toString();
+  });
+
+  req.on("end", () => {
+    try {
+      const parsed = JSON.parse(body);
+      const { title, content } = parsed;
+
+      updateNote(id, title, content);
+
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ message: "Updated successfully" }));
+    } catch (err) {
+      res.writeHead(400);
+      res.end("Invalid JSON");
+    }
+  });
+}
+
+function handleDeleteNote(req, res, id) {
+  try {
+    deleteNote(id);
+
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ message: "Deleted successfully" }));
+  } catch (err) {
+    res.writeHead(500);
+    res.end("Delete failed");
+  }
+}
+
+
+module.exports = {
+  handleGetNotes,
+  handleCreateNote,
+  handleUpdateNote,
+  handleDeleteNote,
+};
