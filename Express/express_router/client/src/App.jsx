@@ -88,7 +88,7 @@ export default function App() {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      <div className="w-[280px] bg-slate-900 text-white flex flex-col p-5 shadow-lg">
+      <div className="w-70 bg-slate-900 text-white flex flex-col p-5 shadow-lg">
         <div className="mb-6">
           <h2 className="text-2xl font-bold">📝 Notes</h2>
           <p className="text-sm text-gray-400">Manage your notes</p>
