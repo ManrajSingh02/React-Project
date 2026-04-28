@@ -9,9 +9,9 @@ const {
 
 const verifyToken = require("../middleware/authMiddleware");
 
-
 router.post("/register", registerUser);
 router.post("/login", loginUser);
+
 router.get("/dashboard", verifyToken, getDashboard);
 
 module.exports = router;

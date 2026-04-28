@@ -1,18 +1,10 @@
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const users = [];
 
 
-const generateToken = (user) => {
-  return jwt.sign(
-    { email: user.email, name: user.name },
-    process.env.JWT_SECRET || "secretkey",
-    { expiresIn: "1h" }
-  );
-};
-
-
-const registerUser = (req, res) => {
+const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
@@ -24,25 +16,44 @@ const registerUser = (req, res) => {
     return res.status(409).json({ message: "User already exists" });
   }
 
-  const newUser = { name, email, password };
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const newUser = { name, email, password: hashedPassword };
   users.push(newUser);
 
-  res.status(201).json({ message: "Registered successfully" });
+  const token = jwt.sign(
+    { name, email },
+    process.env.JWT_SECRET || "secretkey",
+    { expiresIn: "2h" },
+  );
+
+  res.status(201).json({
+    message: "Registered successfully",
+    token,
+  });
 };
 
 
-const loginUser = (req, res) => {
+const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = users.find(
-    (u) => u.email === email && u.password === password
-  );
+  const user = users.find((u) => u.email === email);
 
   if (!user) {
     return res.status(401).json({ message: "Invalid credentials" });
   }
 
-  const token = generateToken(user);
+  const isMatch = await bcrypt.compare(password, user.password);
+
+  if (!isMatch) {
+    return res.status(401).json({ message: "Invalid credentials" });
+  }
+
+  const token = jwt.sign(
+    { name: user.name, email: user.email },
+    process.env.JWT_SECRET || "secretkey",
+    { expiresIn: "1h" },
+  );
 
   res.json({
     message: "Login successful",
@@ -53,8 +64,8 @@ const loginUser = (req, res) => {
 
 const getDashboard = (req, res) => {
   res.json({
-    message: "Welcome to dashboard",
-    user: req.user,
+    message: "Welcome to dashboard!",
+    user: req.user, 
   });
 };
 
