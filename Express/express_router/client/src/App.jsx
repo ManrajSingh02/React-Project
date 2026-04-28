@@ -20,14 +20,12 @@ export default function App() {
     content: "",
   });
 
-  // 📖 Fetch all notes
   const fetchNotes = async () => {
     const res = await fetch("http://localhost:6001/notes");
     const data = await res.json();
     setNotes(data);
   };
 
-  // 🔍 Fetch single note
   const fetchNote = async (id) => {
     const res = await fetch(`http://localhost:6001/notes/${id}`);
     const data = await res.json();
@@ -46,7 +44,6 @@ export default function App() {
     }
   }, [selectedId]);
 
-  // ➕ CREATE
   const handleCreate = async () => {
     try {
       const res = await fetch("http://localhost:6001/notes", {
@@ -73,14 +70,12 @@ export default function App() {
     }
   };
 
-  // ✏️ UPDATE
   const handleUpdateSuccess = () => {
     setEditing(false);
     fetchNotes();
     fetchNote(selectedId);
   };
 
-  // 🗑 DELETE
   const handleDelete = async () => {
     await fetch(`http://localhost:6001/notes/${selectedId}`, {
       method: "DELETE",
@@ -93,8 +88,6 @@ export default function App() {
 
   return (
     <div className="flex h-screen bg-gray-100">
-
-      {/* Sidebar */}
       <div className="w-[280px] bg-slate-900 text-white flex flex-col p-5 shadow-lg">
         <div className="mb-6">
           <h2 className="text-2xl font-bold">📝 Notes</h2>
@@ -109,7 +102,7 @@ export default function App() {
           }}
           className="bg-green-500 hover:bg-green-600 py-2 rounded-lg mb-4"
         >
-          ➕ Add Note
+          Add Note
         </button>
 
         <div className="flex-1 overflow-y-auto">
@@ -121,11 +114,8 @@ export default function App() {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 p-8 overflow-y-auto">
         <div className="bg-white rounded-xl shadow-md p-6 max-w-3xl mx-auto">
-
-          {/* CREATE */}
           {adding && (
             <div className="space-y-4">
               <h2 className="text-2xl font-semibold">Create Note</h2>
@@ -157,7 +147,6 @@ export default function App() {
             </div>
           )}
 
-          {/* VIEW */}
           {!adding && note && !editing && (
             <div className="space-y-6">
               <NoteDetail note={note} />
@@ -169,12 +158,10 @@ export default function App() {
             </div>
           )}
 
-          {/* EDIT */}
           {!adding && note && editing && (
             <EditNote note={note} onSuccess={handleUpdateSuccess} />
           )}
 
-          {/* EMPTY */}
           {!adding && !note && (
             <div className="text-center text-gray-500 py-20">
               <h2 className="text-xl">Select or create a note</h2>
@@ -183,7 +170,6 @@ export default function App() {
         </div>
       </div>
 
-      {/* 🔥 DELETE CONFIRM MODAL */}
       <Dialog
         open={isOpen}
         onClose={() => setIsOpen(false)}

@@ -15,27 +15,27 @@ export default function EditNote({ note, onSuccess }) {
       });
 
       if (!res.ok) {
-        alert("Update failed ❌");
+        alert("Update failed ");
         return;
       }
 
-      alert("Note updated ✏️");
+      alert("Note updated ");
       onSuccess();
     } catch (err) {
       console.error(err);
-      alert("Something went wrong ❌");
+      alert("Something went wrong ");
     }
   };
 
   return (
     <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-xl p-6 space-y-6">
 
-      {/* Header */}
+
       <h2 className="text-2xl font-semibold text-gray-800">
         Edit Note
       </h2>
 
-      {/* Title Input */}
+ 
       <div className="space-y-2">
         <label className="text-sm text-gray-600">Title</label>
         <input
@@ -45,7 +45,7 @@ export default function EditNote({ note, onSuccess }) {
         />
       </div>
 
-      {/* Content Input */}
+    
       <div className="space-y-2">
         <label className="text-sm text-gray-600">Content</label>
         <textarea
@@ -55,7 +55,7 @@ export default function EditNote({ note, onSuccess }) {
         />
       </div>
 
-      {/* Buttons */}
+  
       <div className="flex justify-end gap-3">
 
         <button
