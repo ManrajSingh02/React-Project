@@ -1,9 +1,15 @@
-require("dotenv").config();
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
 
-const express = require("express");
-const cors = require("cors");
 
-const authRoutes = require("./routes/authRoutes");
+import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import notesRoutes from "./routes/notesRoutes.js";
+
+
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4008;
@@ -16,7 +22,9 @@ app.use(
 
 app.use(express.json());
 
-app.use("/", authRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);   
+app.use("/api/notes", notesRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server is running...");

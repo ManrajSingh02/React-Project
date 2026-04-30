@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import Layout from "../components/Layout";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    fetchDashboard();
-  }, []);
+  const navigate = useNavigate();
 
   const fetchDashboard = async () => {
     try {
-      const res = await fetch("http://localhost:4004/dashboard", {
+      const res = await fetch(`${API_URL}/api/user/dashboard`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -20,45 +22,56 @@ export default function Dashboard() {
 
       if (!res.ok) {
         throw new Error(data.message);
-        
       }
 
       setUser(data.user);
-      setMessage(data.message);
     } catch (err) {
       setMessage(err.message || "Not authorized");
     }
   };
 
+  useEffect(() => {
+    fetchDashboard();
+  }, []);
+
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md text-center">
-        
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">
+    <Layout>
+      <div className="backdrop-blur-xl bg-white/10 border border-white/20 
+                      shadow-2xl rounded-2xl p-8 w-full max-w-md text-center">
+
+        <h2 className="text-3xl font-semibold mb-6">
           Dashboard
         </h2>
 
-        {user ? (
-          <div className="space-y-4">
-            <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-              <p className="text-gray-600 text-sm">Name</p>
-              <p className="text-lg font-semibold text-gray-900">
-                {user.name}
-              </p>
-            </div>
-
-            <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-              <p className="text-gray-600 text-sm">Email</p>
-              <p className="text-lg font-semibold text-gray-900">
-                {user.email}
-              </p>
-            </div>
-          </div>
+        {!user ? (
+          <p className="text-red-400">{message || "Loading..."}</p>
         ) : (
-          <p className="text-red-500 font-medium">{message}</p>
-        )}
+          <>
+            <div className="bg-white/10 p-4 rounded-lg mb-4">
+              <p className="text-gray-300 text-sm">Name</p>
+              <p className="text-lg font-medium">{user.name}</p>
+            </div>
 
+            <div className="bg-white/10 p-4 rounded-lg mb-6">
+              <p className="text-gray-300 text-sm">Email</p>
+              <p className="text-lg font-medium">{user.email}</p>
+            </div>
+
+            <button
+              onClick={handleLogout}
+              className="w-full py-2 rounded-lg bg-red-500 hover:bg-red-600 transition"
+            >
+              Logout
+            </button>
+          </>
+        )}
       </div>
-    </div>
+    </Layout>
   );
 }

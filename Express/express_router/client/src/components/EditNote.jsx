@@ -3,10 +3,11 @@ import { useState } from "react";
 export default function EditNote({ note, onSuccess }) {
   const [title, setTitle] = useState(note.title);
   const [content, setContent] = useState(note.content);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const updateNote = async () => {
     try {
-      const res = await fetch(`http://localhost:6001/notes/${note.id}`, {
+      const res = await fetch(`${API_URL}/notes/${note.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

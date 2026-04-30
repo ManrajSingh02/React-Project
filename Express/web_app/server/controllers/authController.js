@@ -1,10 +1,9 @@
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 const users = [];
 
-
-const registerUser = async (req, res) => {
+export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
@@ -24,7 +23,7 @@ const registerUser = async (req, res) => {
   const token = jwt.sign(
     { name, email },
     process.env.JWT_SECRET || "secretkey",
-    { expiresIn: "2h" },
+    { expiresIn: "2h" }
   );
 
   res.status(201).json({
@@ -33,18 +32,15 @@ const registerUser = async (req, res) => {
   });
 };
 
-
-const loginUser = async (req, res) => {
+export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   const user = users.find((u) => u.email === email);
-
   if (!user) {
     return res.status(401).json({ message: "Invalid credentials" });
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
-
   if (!isMatch) {
     return res.status(401).json({ message: "Invalid credentials" });
   }
@@ -52,7 +48,7 @@ const loginUser = async (req, res) => {
   const token = jwt.sign(
     { name: user.name, email: user.email },
     process.env.JWT_SECRET || "secretkey",
-    { expiresIn: "1h" },
+    { expiresIn: "1h" }
   );
 
   res.json({
@@ -61,16 +57,9 @@ const loginUser = async (req, res) => {
   });
 };
 
-
-const getDashboard = (req, res) => {
+export const getDashboard = (req, res) => {
   res.json({
     message: "Welcome to dashboard!",
-    user: req.user, 
+    user: req.user,
   });
-};
-
-module.exports = {
-  registerUser,
-  loginUser,
-  getDashboard,
 };

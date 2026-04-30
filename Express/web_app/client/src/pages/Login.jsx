@@ -1,106 +1,90 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import Layout from "../components/Layout";
+
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Login() {
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
-
+  const [form, setForm] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!form.email || !form.password) {
+      setMessage("All fields required");
+      return;
+    }
+
     setLoading(true);
-    setMessage("");
 
     try {
-      const res = await fetch("http://localhost:4004/login", {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        setMessage("Invalid email or password");
-        setLoading(false);
+        setMessage("Invalid credentials");
         return;
       }
 
-   
       localStorage.setItem("token", data.token);
 
-      setMessage("Login successful!");
-
-   
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 500);
-
-    } catch (err) {
-      setMessage("Server error. Try again.");
+      setTimeout(() => navigate("/dashboard"), 500);
+    } catch {
+      setMessage("Server error");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
+    <div className="flex justify-center items-center h-screen bg-gray-100">
+       <Layout/>
+     <form
+  onSubmit={handleSubmit}
+  className="backdrop-blur-xl bg-white/10 border border-white/20 
+             shadow-2xl rounded-2xl p-8 w-full max-w-md "
+>
+  <h2 className="text-3xl font-semibold text-center mb-2">
+    Sign In to Your Account
+  </h2>
 
-        <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
-          Login
-        </h2>
+  <p className=" text-sm text-center mb-6">
+    Welcome back! Please login to continue.
+  </p>
 
-        <div className="space-y-4">
-          <input
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-            placeholder="Email"
-            onChange={(e) =>
-              setForm({ ...form, email: e.target.value })
-            }
-          />
+ 
 
-          <input
-            type="password"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-            placeholder="Password"
-            onChange={(e) =>
-              setForm({ ...form, password: e.target.value })
-            }
-          />
+  <input
+    type="email"
+    placeholder="Enter your email"
+    className="w-full p-3 mb-4 bg-transparent border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+  />
 
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className={`w-full py-3 rounded-lg text-white transition ${
-              loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-black hover:bg-gray-800"
-            }`}
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </div>
+  <input
+    type="password"
+    placeholder="Enter your password"
+    className="w-full p-3 mb-2 bg-transparent border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+  />
 
-        {message && (
-          <p
-            className={`mt-4 text-center font-medium ${
-              message.includes("successful")
-                ? "text-green-600"
-                : "text-red-500"
-            }`}
-          >
-            {message}
-          </p>
-        )}
-      </div>
+
+
+  <button
+    type="submit"
+    className="w-full py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:opacity-90 transition"
+  >
+    Sign In
+  </button>
+</form>
     </div>
   );
 }

@@ -20,14 +20,16 @@ export default function App() {
     content: "",
   });
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const fetchNotes = async () => {
-    const res = await fetch("http://localhost:6001/notes");
+    const res = await fetch(`${API_URL}/notes`);
     const data = await res.json();
     setNotes(data);
   };
 
   const fetchNote = async (id) => {
-    const res = await fetch(`http://localhost:6001/notes/${id}`);
+    const res = await fetch(`${API_URL}/notes/${id}`);
     const data = await res.json();
     setNote(data);
   };
@@ -46,7 +48,7 @@ export default function App() {
 
   const handleCreate = async () => {
     try {
-      const res = await fetch("http://localhost:6001/notes", {
+      const res = await fetch(`${API_URL}/notes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -77,7 +79,7 @@ export default function App() {
   };
 
   const handleDelete = async () => {
-    await fetch(`http://localhost:6001/notes/${selectedId}`, {
+    await fetch(`${API_URL}/notes/${selectedId}`, {
       method: "DELETE",
     });
 
@@ -195,15 +197,12 @@ export default function App() {
                 Cancel
               </button>
 
-              <button
+              <DeleteButton
                 onClick={async () => {
                   await handleDelete();
                   setIsOpen(false);
                 }}
-                className="px-4 py-2 bg-red-500 text-white rounded"
-              >
-                Delete
-              </button>
+              />
             </div>
           </Dialog.Panel>
         </div>
