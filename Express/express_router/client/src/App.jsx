@@ -22,16 +22,37 @@ export default function App() {
 
   const API_URL = import.meta.env.VITE_API_URL;
 
+  const readJson = async (res) => {
+    const contentType = res.headers.get("content-type") || "";
+
+    if (!contentType.includes("application/json")) {
+      const text = await res.text();
+      throw new Error(
+        `Expected JSON from ${res.url}, but received ${contentType || "unknown content type"}: ${text.slice(0, 80)}`
+      );
+    }
+
+    return res.json();
+  };
+
   const fetchNotes = async () => {
-    const res = await fetch(`${API_URL}/notes`);
-    const data = await res.json();
-    setNotes(data);
+    try {
+      const res = await fetch(`${API_URL}/notes`);
+      const data = await readJson(res);
+      setNotes(data);
+    } catch (err) {
+      console.error("Failed to fetch notes:", err);
+    }
   };
 
   const fetchNote = async (id) => {
-    const res = await fetch(`${API_URL}/notes/${id}`);
-    const data = await res.json();
-    setNote(data);
+    try {
+      const res = await fetch(`${API_URL}/notes/${id}`);
+      const data = await readJson(res);
+      setNote(data);
+    } catch (err) {
+      console.error("Failed to fetch note:", err);
+    }
   };
 
   useEffect(() => {
@@ -62,7 +83,7 @@ export default function App() {
         return;
       }
 
-      await res.json();
+      await readJson(res);
 
       setNewNote({ title: "", content: "" });
       setAdding(false);

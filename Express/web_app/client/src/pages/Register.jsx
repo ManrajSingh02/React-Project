@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import Layout from "../components/Layout";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -12,6 +13,7 @@ export default function Register() {
 
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,12 +35,17 @@ export default function Register() {
       const data = await res.json();
 
       if (!res.ok) {
-        setMessage(data.message);
+        setMessage(data.message || "Registration failed");
+        return;
+      }
+
+      if (!data.token) {
+        setMessage("Registration failed: no token received");
         return;
       }
 
       localStorage.setItem("token", data.token);
-      setMessage("Registered successfully!");
+      navigate("/dashboard");
     } catch {
       setMessage("Server error");
     } finally {
@@ -47,37 +54,49 @@ export default function Register() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <Layout/>
-     <form
-  onSubmit={handleSubmit}
-  className="backdrop-blur-xl bg-white/10 border border-white/20 
-             shadow-2xl rounded-2xl p-8 w-full max-w-md "
->
-  <h2 className="text-3xl font-semibold text-center mb-6">
-    Create Account
-  </h2>
+    <Layout>
+      <form
+        onSubmit={handleSubmit}
+        className="backdrop-blur-xl bg-white/10 border border-white/20 shadow-2xl rounded-2xl p-8 w-full max-w-md"
+      >
+        <h2 className="text-3xl font-semibold text-center mb-6">
+          Create Account
+        </h2>
 
-  <input
-    placeholder="Name"
-    className="w-full p-3 mb-4 bg-transparent border border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500"
-  />
+        {message && (
+          <p className="text-red-400 text-sm text-center mb-4">{message}</p>
+        )}
 
-  <input
-    placeholder="Email"
-    className="w-full p-3 mb-4 bg-transparent border border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500"
-  />
+        <input
+          placeholder="Name"
+          value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          className="w-full p-3 mb-4 bg-transparent border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
 
-  <input
-    type="password"
-    placeholder="Password"
-    className="w-full p-3 mb-6 bg-transparent border border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500"
-  />
+        <input
+          type="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          className="w-full p-3 mb-4 bg-transparent border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
 
-  <button className="w-full py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600">
-    Register
-  </button>
-</form>
-    </div>
+        <input
+          type="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          className="w-full p-3 mb-6 bg-transparent border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+
+        <button
+          disabled={loading}
+          className="w-full py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:opacity-90 transition disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {loading ? "Registering..." : "Register"}
+        </button>
+      </form>
+    </Layout>
   );
 }

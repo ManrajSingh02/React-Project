@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import Layout from "../components/Layout";
 
-
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Login() {
@@ -32,13 +31,18 @@ export default function Login() {
       const data = await res.json();
 
       if (!res.ok) {
-        setMessage("Invalid credentials");
+        setMessage(data.message || "Invalid credentials");
+        return;
+      }
+
+      if (!data.token) {
+        setMessage("Login failed: no token received");
         return;
       }
 
       localStorage.setItem("token", data.token);
 
-      setTimeout(() => navigate("/dashboard"), 500);
+      navigate("/dashboard");
     } catch {
       setMessage("Server error");
     } finally {
@@ -47,44 +51,47 @@ export default function Login() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-       <Layout/>
-     <form
-  onSubmit={handleSubmit}
-  className="backdrop-blur-xl bg-white/10 border border-white/20 
-             shadow-2xl rounded-2xl p-8 w-full max-w-md "
->
-  <h2 className="text-3xl font-semibold text-center mb-2">
-    Sign In to Your Account
-  </h2>
+    <Layout>
+      <form
+        onSubmit={handleSubmit}
+        className="backdrop-blur-xl bg-white/10 border border-white/20 shadow-2xl rounded-2xl p-8 w-full max-w-md"
+      >
+        <h2 className="text-3xl font-semibold text-center mb-2">
+          Sign In to Your Account
+        </h2>
 
-  <p className=" text-sm text-center mb-6">
-    Welcome back! Please login to continue.
-  </p>
+        <p className="text-sm text-center mb-6">
+          Welcome back! Please login to continue.
+        </p>
 
- 
+        {message && (
+          <p className="text-red-400 text-sm text-center mb-4">{message}</p>
+        )}
 
-  <input
-    type="email"
-    placeholder="Enter your email"
-    className="w-full p-3 mb-4 bg-transparent border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-  />
+        <input
+          type="email"
+          placeholder="Enter your email"
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          className="w-full p-3 mb-4 bg-transparent border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
 
-  <input
-    type="password"
-    placeholder="Enter your password"
-    className="w-full p-3 mb-2 bg-transparent border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-  />
+        <input
+          type="password"
+          placeholder="Enter your password"
+          value={form.password}
+          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          className="w-full p-3 mb-4 bg-transparent border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
 
-
-
-  <button
-    type="submit"
-    className="w-full py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:opacity-90 transition"
-  >
-    Sign In
-  </button>
-</form>
-    </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:opacity-90 transition disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {loading ? "Signing in..." : "Sign In"}
+        </button>
+      </form>
+    </Layout>
   );
 }

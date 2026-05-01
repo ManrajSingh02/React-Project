@@ -10,29 +10,42 @@ export default function Dashboard() {
 
   const navigate = useNavigate();
 
-  const fetchDashboard = async () => {
-    try {
-      const res = await fetch(`${API_URL}/api/user/dashboard`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      const token = localStorage.getItem("token");
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message);
+      if (!token) {
+        navigate("/");
+        return;
       }
 
-      setUser(data.user);
-    } catch (err) {
-      setMessage(err.message || "Not authorized");
-    }
-  };
+      try {
+        const res = await fetch(`${API_URL}/api/user/dashboard`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-  useEffect(() => {
+        const data = await res.json();
+
+        if (!res.ok) {
+          if (res.status === 401 || res.status === 403) {
+            localStorage.removeItem("token");
+            navigate("/");
+            return;
+          }
+
+          throw new Error(data.message);
+        }
+
+        setUser(data.user);
+      } catch (err) {
+        setMessage(err.message || "Not authorized");
+      }
+    };
+
     fetchDashboard();
-  }, []);
+  }, [navigate]);
 
 
   const handleLogout = () => {

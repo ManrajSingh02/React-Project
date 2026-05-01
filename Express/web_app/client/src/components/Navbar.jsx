@@ -16,7 +16,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
-      <h1 className="text-xl font-bold">MyApp</h1>
+      <h1 className="text-xl font-bold">WEB APP</h1>
 
       <div className="flex items-center space-x-5">
         

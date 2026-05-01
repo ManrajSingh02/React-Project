@@ -3,6 +3,13 @@ import bcrypt from "bcrypt";
 
 const users = [];
 
+const createToken = (user) =>
+  jwt.sign(
+    { name: user.name, email: user.email },
+    process.env.JWT_SECRET,
+    { expiresIn: "2h" }
+  );
+
 export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -20,11 +27,7 @@ export const registerUser = async (req, res) => {
   const newUser = { name, email, password: hashedPassword };
   users.push(newUser);
 
-  const token = jwt.sign(
-    { name, email },
-    process.env.JWT_SECRET || "secretkey",
-    { expiresIn: "2h" }
-  );
+  const token = createToken(newUser);
 
   res.status(201).json({
     message: "Registered successfully",
@@ -45,11 +48,7 @@ export const loginUser = async (req, res) => {
     return res.status(401).json({ message: "Invalid credentials" });
   }
 
-  const token = jwt.sign(
-    { name: user.name, email: user.email },
-    process.env.JWT_SECRET || "secretkey",
-    { expiresIn: "1h" }
-  );
+  const token = createToken(user);
 
   res.json({
     message: "Login successful",
