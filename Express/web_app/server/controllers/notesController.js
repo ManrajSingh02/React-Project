@@ -1,14 +1,17 @@
-
-let notes = [];
+import {
+  createUserNote,
+  deleteUserNote,
+  getUserNotes,
+  updateUserNote,
+} from "../services/noteService.js";
 
 export const getNotes = (req, res) => {
   try {
- 
-    const userNotes = notes.filter(
-      (note) => note.userEmail === req.user.email
-    );
+    const notes = getUserNotes(req.user.email);
 
-    res.json(userNotes);
+    res.json({
+      notes,
+    });
   } catch (err) {
     res.status(500).json({ message: "Error fetching notes" });
   }
@@ -22,14 +25,7 @@ export const createNote = (req, res) => {
       return res.status(400).json({ message: "All fields required" });
     }
 
-    const newNote = {
-      id: Date.now().toString(),
-      title,
-      content,
-      userEmail: req.user.email,
-    };
-
-    notes.push(newNote);
+    const newNote = createUserNote(title, content, req.user.email);
 
     res.status(201).json({
       message: "Note created",
@@ -40,53 +36,45 @@ export const createNote = (req, res) => {
   }
 };
 
-
 export const updateNote = (req, res) => {
   try {
-    const { id } = req.params;
     const { title, content } = req.body;
 
-    const noteIndex = notes.findIndex(
-      (n) => n.id === id && n.userEmail === req.user.email
+    if (!title || !content) {
+      return res.status(400).json({ message: "All fields required" });
+    }
+
+    const updatedNote = updateUserNote(
+      req.params.id,
+      title,
+      content,
+      req.user.email
     );
 
-    if (noteIndex === -1) {
+    if (!updatedNote) {
       return res.status(404).json({ message: "Note not found" });
     }
 
-    notes[noteIndex] = {
-      ...notes[noteIndex],
-      title,
-      content,
-    };
-
     res.json({
       message: "Note updated",
-      note: notes[noteIndex],
+      note: updatedNote,
     });
   } catch (err) {
     res.status(500).json({ message: "Error updating note" });
   }
 };
 
-
 export const deleteNote = (req, res) => {
   try {
-    const { id } = req.params;
+    const deletedNote = deleteUserNote(req.params.id, req.user.email);
 
-    const noteIndex = notes.findIndex(
-      (n) => n.id === id && n.userEmail === req.user.email
-    );
-
-    if (noteIndex === -1) {
+    if (!deletedNote) {
       return res.status(404).json({ message: "Note not found" });
     }
 
-    const deletedNote = notes.splice(noteIndex, 1);
-
     res.json({
       message: "Note deleted",
-      note: deletedNote[0],
+      note: deletedNote,
     });
   } catch (err) {
     res.status(500).json({ message: "Error deleting note" });

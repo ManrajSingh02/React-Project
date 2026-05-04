@@ -1,12 +1,13 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
 
+
+import dotenv from "dotenv";
+import express from "express";
+import cors from "cors";  
 
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import notesRoutes from "./routes/notesRoutes.js";
-
+import verifyToken from "./middleware/authMiddleware.js";
 
 
 dotenv.config();
@@ -24,7 +25,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);   
-app.use("/api/notes", notesRoutes);
+app.use("/api/notes", verifyToken, notesRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server is running...");
